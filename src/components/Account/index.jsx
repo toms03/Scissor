@@ -1,12 +1,24 @@
-import { Box, Button, Divider, Grid, Typography } from '@material-ui/core';
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { nanoid } from 'nanoid';
-import { Fragment, useMemo, useState } from 'react';
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Divider,
+  Grid,
+  Typography,
+} from "@material-ui/core";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  serverTimestamp,
+} from "firebase/firestore";
+import { nanoid } from "nanoid";
+import { Fragment, useEffect, useMemo, useState } from "react";
 
-import { auth, firestore } from '../../firebase';
-import Card from './Card';
-import Navbar from './Navbar';
-import ShortenURLModal from './ShortenLinkModal';
+import { auth, firestore } from "../../firebase";
+import Card from "./Card";
+import Navbar from "./Navbar";
+import ShortenURLModal from "./ShortenLinkModal";
 
 const dummyData = [
   {
@@ -39,6 +51,7 @@ const dummyData = [
 function Account() {
   const [openModal, setOpenModal] = useState(false);
   const [links, setLinks] = useState(dummyData);
+  const [fetchingLinks, setFetchingLinks] = useState(true);
   const userUid = auth.currentUser.uid;
 
   const linksPathRef = useMemo(
@@ -66,6 +79,25 @@ function Account() {
     ]);
     setOpenModal(false);
   };
+
+  useEffect(() => {
+    const fetchLinks = async () => {
+      const snapshot = await getDocs(linksPathRef);
+      const tempLinks = dummyData;
+      snapshot.forEach((doc) =>
+        tempLinks.push({
+          ...doc.data(),
+          id: doc.id,
+          createdAt: doc.data().createdAt.toDate(),
+        })
+      );
+      setLinks(tempLinks);
+      setFetchingLinks(false);
+    };
+
+    fetchLinks();
+  }, [linksPathRef]);
+
   return (
     <>
       {openModal && (
@@ -92,16 +124,40 @@ function Account() {
               </Button>
             </Box>
 
-            {links.map((link, idx) => (
-              <Fragment key={link.id}>
-                <Card {...link} deleteLink={() => {}} copyLink={() => {}} />
-                {idx !== dummyData.length - 1 && (
-                  <Box my={4}>
-                    <Divider />
-                  </Box>
-                )}
-              </Fragment>
-            ))}
+            {fetchingLinks ? (
+              <Box textAlign="center">
+                <CircularProgress />
+              </Box>
+            ) : !links.length ? (
+              <Box textAlign="center">
+                <img
+                  style={{
+                    width: "225px",
+                    height: "auto",
+                    marginBottom: "24px",
+                  }}
+                  src="/assets/no_links.svg"
+                  alt="no links"
+                />
+                <Typography>You have no links</Typography>
+              </Box>
+            ) : (
+              links
+                .sort(
+                  (prevLink, nextLink) =>
+                    nextLink.createdAt - prevLink.createdAt
+                )
+                .map((link, idx) => (
+                  <Fragment key={link.id}>
+                    <Card {...link} deleteLink={() => {}} copyLink={() => {}} />
+                    {idx !== dummyData.length - 1 && (
+                      <Box my={4}>
+                        <Divider />
+                      </Box>
+                    )}
+                  </Fragment>
+                ))
+            )}
           </Grid>
         </Grid>
       </Box>
