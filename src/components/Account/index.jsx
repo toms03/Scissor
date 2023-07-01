@@ -4,54 +4,59 @@ import {
   CircularProgress,
   Divider,
   Grid,
+  Snackbar,
   Typography,
 } from "@material-ui/core";
+import copy from "copy-to-clipboard";
 import {
   addDoc,
   collection,
+  deleteDoc,
+  doc,
   getDocs,
   serverTimestamp,
 } from "firebase/firestore";
 import { nanoid } from "nanoid";
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 
 import { auth, firestore } from "../../firebase";
 import Card from "./Card";
 import Navbar from "./Navbar";
 import ShortenURLModal from "./ShortenLinkModal";
 
-const dummyData = [
-  {
-    id: "31r08ms0fam",
-    createdAt: new Date(),
-    name: "My website",
-    longURL: "https://google.com",
-    shortCode: "masdo",
-    totalClicks: 313,
-  },
-  {
-    id: "31r08asdasfam",
-    createdAt: new Date(),
-    name: "E-book",
-    longURL: "https://drive.google.com/asdokasnd89",
-    shortCode: "182as",
-    totalClicks: 32,
-  },
-  {
-    id: "asdasdas",
-    createdAt: new Date(),
-    name: "E-book",
-    longURL: "https://drive.google.com/asdokasnd89",
-    shortCode: "182as",
-    totalClicks: 32,
-    cool: ["1,2,3"],
-  },
-];
+// const dummyData = [
+//   {
+//     id: "31r08ms0fam",
+//     createdAt: new Date(),
+//     name: "My website",
+//     longURL: "https://google.com",
+//     shortCode: "masdo",
+//     totalClicks: 313,
+//   },
+//   {
+//     id: "31r08asdasfam",
+//     createdAt: new Date(),
+//     name: "E-book",
+//     longURL: "https://drive.google.com/asdokasnd89",
+//     shortCode: "182as",
+//     totalClicks: 32,
+//   },
+//   {
+//     id: "asdasdas",
+//     createdAt: new Date(),
+//     name: "E-book",
+//     longURL: "https://drive.google.com/asdokasnd89",
+//     shortCode: "182as",
+//     totalClicks: 32,
+//     cool: ["1,2,3"],
+//   },
+// ];
 
 function Account() {
   const [openModal, setOpenModal] = useState(false);
-  const [links, setLinks] = useState(dummyData);
+  const [links, setLinks] = useState([]);
   const [fetchingLinks, setFetchingLinks] = useState(true);
+  const [newLinkToastr, setNewLinkToastr] = useState(false);
   const userUid = auth.currentUser.uid;
 
   const linksPathRef = useMemo(
@@ -80,10 +85,27 @@ function Account() {
     setOpenModal(false);
   };
 
+  const handleDeleteLink = useCallback(
+    async (linkDocID) => {
+      if (window.confirm("Do you want to delete the link?")) {
+        await deleteDoc(doc(firestore, "users", userUid, "links", linkDocID));
+        setLinks((oldLinks) =>
+          oldLinks.filter((link) => link.id !== linkDocID)
+        );
+      }
+    },
+    [userUid]
+  );
+
+  const handleCopyLink = useCallback((shortUrl) => {
+    copy(shortUrl);
+    setNewLinkToastr(true);
+  }, []);
+
   useEffect(() => {
     const fetchLinks = async () => {
       const snapshot = await getDocs(linksPathRef);
-      const tempLinks = dummyData;
+      const tempLinks = [];
       snapshot.forEach((doc) =>
         tempLinks.push({
           ...doc.data(),
@@ -100,6 +122,12 @@ function Account() {
 
   return (
     <>
+      <Snackbar
+        open={newLinkToastr}
+        onClose={() => setNewLinkToastr(false)}
+        autoHideDuration={2000}
+        message="Link copied to the clipboard"
+      />
       {openModal && (
         <ShortenURLModal
           createShortenLink={handleCreateShortenLink}
@@ -149,8 +177,12 @@ function Account() {
                 )
                 .map((link, idx) => (
                   <Fragment key={link.id}>
-                    <Card {...link} deleteLink={() => {}} copyLink={() => {}} />
-                    {idx !== dummyData.length - 1 && (
+                    <Card
+                      {...link}
+                      deleteLink={handleDeleteLink}
+                      copyLink={handleCopyLink}
+                    />
+                    {idx !== links.length - 1 && (
                       <Box my={4}>
                         <Divider />
                       </Box>
