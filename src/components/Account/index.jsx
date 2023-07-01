@@ -65,7 +65,6 @@ function Account() {
       { ...link, createdAt: new Date(), id: resp.id },
     ]);
     setOpenModal(false);
-    console.log(resp);
   };
   return (
     <>
