@@ -1,8 +1,12 @@
-import { Box, Button, Divider, Grid, Typography } from "@material-ui/core";
-import { Fragment, useState } from "react";
+import { Box, Button, Divider, Grid, Typography } from '@material-ui/core';
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { nanoid } from 'nanoid';
+import { Fragment, useMemo, useState } from 'react';
 
-import Card from "./Card";
-import Navbar from "./Navbar";
+import { auth, firestore } from '../../firebase';
+import Card from './Card';
+import Navbar from './Navbar';
+import ShortenURLModal from './ShortenLinkModal';
 
 const dummyData = [
   {
@@ -34,9 +38,43 @@ const dummyData = [
 
 function Account() {
   const [openModal, setOpenModal] = useState(false);
-  openModal;
+  const [links, setLinks] = useState(dummyData);
+  const userUid = auth.currentUser.uid;
+
+  const linksPathRef = useMemo(
+    () => collection(firestore, "users", userUid, "links"),
+    [userUid]
+  );
+
+  const handleCreateShortenLink = async (name, longURL) => {
+    const link = {
+      name,
+      longURL:
+        longURL.includes("http://") || longURL.includes("https://")
+          ? longURL
+          : `http://${longURL}`,
+      createdAt: serverTimestamp(),
+      shortCode: nanoid(6),
+      totalClicks: 0,
+    };
+
+    const resp = await addDoc(linksPathRef, link);
+
+    setLinks((links) => [
+      ...links,
+      { ...link, createdAt: new Date(), id: resp.id },
+    ]);
+    setOpenModal(false);
+    console.log(resp);
+  };
   return (
     <>
+      {openModal && (
+        <ShortenURLModal
+          createShortenLink={handleCreateShortenLink}
+          handleClose={() => setOpenModal(false)}
+        />
+      )}
       <Navbar />
       <Box mt={{ xs: 3, sm: 5 }} p={{ xs: 2, sm: 0 }}>
         <Grid container justifyContent="center">
@@ -55,7 +93,7 @@ function Account() {
               </Button>
             </Box>
 
-            {dummyData.map((link, idx) => (
+            {links.map((link, idx) => (
               <Fragment key={link.id}>
                 <Card {...link} deleteLink={() => {}} copyLink={() => {}} />
                 {idx !== dummyData.length - 1 && (
