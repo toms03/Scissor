@@ -21,7 +21,7 @@ function Account() {
     [userUid]
   );
 
-  const handleCreateShortenLink = async (name, longURL) => {
+  const handleCreateShortenLink = async (name, longURL, shortUrl) => {
     const link = {
       name,
       longURL:
@@ -29,7 +29,7 @@ function Account() {
           ? longURL
           : `http://${longURL}`,
       createdAt: serverTimestamp(),
-      shortCode: nanoid(6),
+      shortCode: shortUrl || nanoid(6),
       totalClicks: 0,
     };
 

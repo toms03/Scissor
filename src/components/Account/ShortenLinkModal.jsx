@@ -22,6 +22,7 @@ const ShortenLinkModal = ({ handleClose, createShortenLink }) => {
   const [form, setForm] = useState({
     name: "",
     longUrl: "",
+    shortUrl: "",
   });
 
   const handleChange = (event) =>
@@ -34,6 +35,7 @@ const ShortenLinkModal = ({ handleClose, createShortenLink }) => {
     const errors = {};
     const tName = form.name.trim();
     const tLongUrl = form.longUrl.trim();
+    const tShortUrl = form.shortUrl.trim();
 
     const expression =
       /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)?/gi;
@@ -49,7 +51,7 @@ const ShortenLinkModal = ({ handleClose, createShortenLink }) => {
     if (Object.keys(errors).length) return setErrors(errors);
     setLoading(true);
     try {
-      createShortenLink(tName, tLongUrl);
+      createShortenLink(tName, tLongUrl, tShortUrl);
     } catch (err) {
       setLoading(false);
     }
@@ -88,6 +90,17 @@ const ShortenLinkModal = ({ handleClose, createShortenLink }) => {
           variant="filled"
           label="Long URL"
         />
+        <Box mt={3}>
+          <TextField
+            helperText="(Optional: Add preferred link end e.g. Brand Name)"
+            value={form.shortUrl}
+            name="shortUrl"
+            onChange={handleChange}
+            fullWidth
+            variant="filled"
+            label="http://www.scissor.xyz/(Preferred Short URL)"
+          />
+        </Box>
       </DialogContent>
       <DialogActions>
         <Box mr={2} my={1}>
