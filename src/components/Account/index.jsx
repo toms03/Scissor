@@ -9,34 +9,6 @@ import Card from './Card';
 import Navbar from './Navbar';
 import ShortenURLModal from './ShortenLinkModal';
 
-const dummyData = [
-  {
-    id: "31r08ms0fam",
-    createdAt: new Date(),
-    name: "My website",
-    longURL: "https://google.com",
-    shortCode: "masdo",
-    totalClicks: 313,
-  },
-  {
-    id: "31r08asdasfam",
-    createdAt: new Date(),
-    name: "E-book",
-    longURL: "https://drive.google.com/asdokasnd89",
-    shortCode: "182as",
-    totalClicks: 32,
-  },
-  {
-    id: "asdasdas",
-    createdAt: new Date(),
-    name: "E-book",
-    longURL: "https://drive.google.com/asdokasnd89",
-    shortCode: "182as",
-    totalClicks: 32,
-    cool: ["1,2,3"],
-  },
-];
-
 function Account() {
   const [openModal, setOpenModal] = useState(false);
   const [links, setLinks] = useState([]);
@@ -90,7 +62,7 @@ function Account() {
   useEffect(() => {
     const fetchLinks = async () => {
       const snapshot = await getDocs(linksPathRef);
-      const tempLinks = dummyData;
+      const tempLinks = [];
       snapshot.forEach((doc) =>
         tempLinks.push({
           ...doc.data(),
