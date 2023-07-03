@@ -1,6 +1,7 @@
 import BarChart from '@mui/icons-material/BarChart';
 import { Box, Button, Hidden, Typography } from '@mui/material';
 import format from 'date-fns/format';
+import QRCode from 'react-qr-code';
 
 /* eslint-disable react/prop-types */
 const Card = ({
@@ -14,6 +15,27 @@ const Card = ({
   copyLink,
 }) => {
   const shortUrl = `${window.location.host}/${shortCode}`;
+  const downloadQR = () => {
+    const svg = document.getElementById(shortCode);
+    const canvas = document.createElement("canvas");
+    canvas.width = svg.clientWidth;
+    canvas.height = svg.clientHeight;
+
+    const img = new Image();
+    img.src = `data:image/svg+xml;utf8,${new XMLSerializer().serializeToString(
+      svg
+    )}`;
+
+    img.onload = function () {
+      console.log(img);
+      canvas.getContext("2d")?.drawImage(img, 0, 0);
+      const a = document.createElement("a");
+      a.download = "short-link.png";
+      a.href = canvas.toDataURL();
+      a.click();
+    };
+  };
+
   return (
     <Box display="flex" justifyContent="space-between" alignItems="center">
       <Box width="50%">
@@ -51,7 +73,23 @@ const Card = ({
           </Button>
         </Box>
       </Box>
-
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          cursor: "pointer",
+        }}
+      >
+        <QRCode
+          size={200}
+          id={shortCode}
+          bgColor="white"
+          fgColor="black"
+          value={shortUrl}
+        />
+        <a onClick={downloadQR}> Download QR </a>
+      </Box>
       <Box>
         <Box display="flex" justifyContent="center">
           <Typography>{totalClicks}</Typography>
