@@ -1,4 +1,4 @@
-import { Box, CircularProgress, ThemeProvider } from '@material-ui/core';
+import { Box, CircularProgress, ThemeProvider } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
@@ -30,20 +30,18 @@ const App = () => {
     );
   return (
     <ThemeProvider theme={theme}>
-        <Routes>
-          <Route
-            exact
-            path="/"
-            element={
-              user ? <Navigate to="/account" replace={true} /> : <Home />
-            }
-          />
-          <Route
-            path="account"
-            element={user ? <Account /> : <Navigate to="/" replace={true} />}
-          />
-          <Route path=":shortCode" element={<LinkRedirect />} />
-        </Routes>
+      <Routes>
+        <Route
+          exact
+          path="/"
+          element={user ? <Navigate to="/account" replace={true} /> : <Home />}
+        />
+        <Route
+          path="account"
+          element={user ? <Account /> : <Navigate to="/" replace={true} />}
+        />
+        <Route path=":shortCode" element={<LinkRedirect />} />
+      </Routes>
     </ThemeProvider>
   );
 };

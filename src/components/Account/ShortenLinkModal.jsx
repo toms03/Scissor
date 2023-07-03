@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+import Close from '@mui/icons-material/Close';
 import {
   Box,
   Button,
@@ -9,10 +9,10 @@ import {
   DialogTitle,
   IconButton,
   TextField,
-} from "@material-ui/core";
-import { Close as CloseIcon } from "@material-ui/icons";
-import { useState } from "react";
+} from '@mui/material';
+import { useState } from 'react';
 
+/* eslint-disable react/prop-types */
 const ShortenLinkModal = ({ handleClose, createShortenLink }) => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({
@@ -61,7 +61,7 @@ const ShortenLinkModal = ({ handleClose, createShortenLink }) => {
         <Box display="flex" alignItems="center" justifyContent="space-between">
           Create short URL
           <IconButton onClick={handleClose} size="small">
-            <CloseIcon />
+            <Close />
           </IconButton>
         </Box>
       </DialogTitle>

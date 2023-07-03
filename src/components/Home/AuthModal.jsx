@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+import Close from '@mui/icons-material/Close';
 import {
   Box,
   Button,
@@ -10,16 +10,13 @@ import {
   IconButton,
   TextField,
   Typography,
-} from "@material-ui/core";
-import { Close as CloseIcon } from "@material-ui/icons";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import { useState } from "react";
+} from '@mui/material';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { useState } from 'react';
 
-import { auth } from "../../firebase";
+import { auth } from '../../firebase';
 
+/* eslint-disable react/prop-types */
 const AuthModal = ({ onClose }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -55,7 +52,7 @@ const AuthModal = ({ onClose }) => {
         <Box display="flex" alignItems="center" justifyContent="space-between">
           {isSignIn ? "Sign in" : "Sign up"}
           <IconButton onClick={onClose} size="small">
-            <CloseIcon />
+            <Close />
           </IconButton>
         </Box>
       </DialogTitle>

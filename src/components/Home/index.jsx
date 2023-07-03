@@ -1,7 +1,7 @@
-import { Box, Button, Grid, Hidden, Typography } from "@material-ui/core";
-import { useState } from "react";
+import { Box, Button, Grid, Hidden, Typography } from '@mui/material';
+import { useState } from 'react';
 
-import AuthModal from "./AuthModal";
+import AuthModal from './AuthModal';
 
 const Home = () => {
   const [openAuthModal, setOpenAuthModal] = useState(false);

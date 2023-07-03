@@ -1,8 +1,8 @@
-/* eslint-disable react/prop-types */
-import { Box, Button, Hidden, Typography } from "@material-ui/core";
-import { BarChart as ChartIcon } from "@material-ui/icons";
-import format from "date-fns/format";
+import BarChart from '@mui/icons-material/BarChart';
+import { Box, Button, Hidden, Typography } from '@mui/material';
+import format from 'date-fns/format';
 
+/* eslint-disable react/prop-types */
 const Card = ({
   id,
   createdAt,
@@ -55,7 +55,7 @@ const Card = ({
       <Box>
         <Box display="flex" justifyContent="center">
           <Typography>{totalClicks}</Typography>
-          <ChartIcon />
+          <BarChart />
         </Box>
         <Hidden only="xs">
           <Typography variant="overline">Total Clicks</Typography>

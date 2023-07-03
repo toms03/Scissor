@@ -1,56 +1,41 @@
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Divider,
-  Grid,
-  Snackbar,
-  Typography,
-} from "@material-ui/core";
-import copy from "copy-to-clipboard";
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  serverTimestamp,
-} from "firebase/firestore";
-import { nanoid } from "nanoid";
-import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import { Box, Button, CircularProgress, Divider, Grid, Snackbar, Typography } from '@mui/material';
+import copy from 'copy-to-clipboard';
+import { addDoc, collection, deleteDoc, doc, getDocs, serverTimestamp } from 'firebase/firestore';
+import { nanoid } from 'nanoid';
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { auth, firestore } from "../../firebase";
-import Card from "./Card";
-import Navbar from "./Navbar";
-import ShortenURLModal from "./ShortenLinkModal";
+import { auth, firestore } from '../../firebase';
+import Card from './Card';
+import Navbar from './Navbar';
+import ShortenURLModal from './ShortenLinkModal';
 
-// const dummyData = [
-//   {
-//     id: "31r08ms0fam",
-//     createdAt: new Date(),
-//     name: "My website",
-//     longURL: "https://google.com",
-//     shortCode: "masdo",
-//     totalClicks: 313,
-//   },
-//   {
-//     id: "31r08asdasfam",
-//     createdAt: new Date(),
-//     name: "E-book",
-//     longURL: "https://drive.google.com/asdokasnd89",
-//     shortCode: "182as",
-//     totalClicks: 32,
-//   },
-//   {
-//     id: "asdasdas",
-//     createdAt: new Date(),
-//     name: "E-book",
-//     longURL: "https://drive.google.com/asdokasnd89",
-//     shortCode: "182as",
-//     totalClicks: 32,
-//     cool: ["1,2,3"],
-//   },
-// ];
+const dummyData = [
+  {
+    id: "31r08ms0fam",
+    createdAt: new Date(),
+    name: "My website",
+    longURL: "https://google.com",
+    shortCode: "masdo",
+    totalClicks: 313,
+  },
+  {
+    id: "31r08asdasfam",
+    createdAt: new Date(),
+    name: "E-book",
+    longURL: "https://drive.google.com/asdokasnd89",
+    shortCode: "182as",
+    totalClicks: 32,
+  },
+  {
+    id: "asdasdas",
+    createdAt: new Date(),
+    name: "E-book",
+    longURL: "https://drive.google.com/asdokasnd89",
+    shortCode: "182as",
+    totalClicks: 32,
+    cool: ["1,2,3"],
+  },
+];
 
 function Account() {
   const [openModal, setOpenModal] = useState(false);
@@ -105,7 +90,7 @@ function Account() {
   useEffect(() => {
     const fetchLinks = async () => {
       const snapshot = await getDocs(linksPathRef);
-      const tempLinks = [];
+      const tempLinks = dummyData;
       snapshot.forEach((doc) =>
         tempLinks.push({
           ...doc.data(),
